@@ -23,7 +23,7 @@ import           Distribution.Verbosity
 version :: IO String
 version = do
     generic <- readPackageDescription normal "{{ project }}.cabal"
-    pure . showVersion . pkgVersion . package . packageDescription $ generic
+    pure . show . pkgVersion . package . packageDescription $ generic
 
 main :: IO ()
 main = version >>= \v -> shakeArgs shakeOptions { shakeFiles = ".shake", shakeLint = Just LintBasic, shakeVersion = v } $ do
@@ -44,17 +44,17 @@ main = version >>= \v -> shakeArgs shakeOptions { shakeFiles = ".shake", shakeLi
         removeFilesAfter ".stack-work" ["//*"]
         removeFilesAfter ".shake" ["//*"]
 
-    ".stack-work/dist/x86_64-linux/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/all.js" %> \out -> do
+    ".stack-work/dist/x86_64-osx/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/all.js" %> \out -> do
         need ["src/Lib.hs","{{ project }}.cabal","stack.yaml"]
         cmd ["stack", "build", "--stack-yaml", "stack.yaml", "--install-ghc"]
 
-    ".stack-work/dist/x86_64-linux/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/all.min.js" %> \out -> do
-        need [".stack-work/dist/x86_64-linux/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/all.js"]
-        cmd (Cwd ".stack-work/dist/x86_64-linux/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/") Shell "ccjs all.js --externs=node --externs=all.js.externs > all.min.js"
+    ".stack-work/dist/x86_64-osx/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/all.min.js" %> \out -> do
+        need [".stack-work/dist/x86_64-osx/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/all.js"]
+        cmd (Cwd ".stack-work/dist/x86_64-osx/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/") Shell "ccjs all.js --externs=node --externs=all.js.externs > all.min.js"
 
     "target/all.min.js" %> \out -> do
-        need [".stack-work/dist/x86_64-linux/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/all.min.js"]
-        cmd Shell "cp .stack-work/dist/x86_64-linux/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/all.min.js target/all.min.js"
+        need [".stack-work/dist/x86_64-osx/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/all.min.js"]
+        cmd Shell "cp .stack-work/dist/x86_64-osx/Cabal-1.24.2.0_ghcjs/build/{{ project }}/{{ project }}.jsexe/all.min.js target/all.min.js"
 
     "target/index.html" %> \out -> do
         liftIO $ createDirectoryIfMissing True "target"
